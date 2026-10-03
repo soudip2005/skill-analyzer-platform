@@ -1,0 +1,88 @@
+<!-- templates/profile.html -->
+{% extends 'base.html' %} {% block title %}My Profile | Skill Analyzer{% endblock %} {% block content %}
+<div class="profile-page-wrapper">
+    <div class="dashboard-container" style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header" style="margin-bottom: 3rem;">
+            <div class="header-text">
+                <h2 class="section-title" style="color: white; font-size: 2.5rem; margin-bottom: 0.5rem;">Welcome back, {{ session.get('user', 'Soudip') }}</h2>
+                <p class="lead-text" style="color: #94a3b8; font-size: 1.1rem;">Track your skill proficiency and manage your career profile.</p>
+            </div>
+
+            <!-- Actions Group -->
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 1.5rem;">
+                <a href="{{ url_for('resume_buildup') }}" class="btn btn-primary glass-btn generate-btn" style="padding: 1rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center;">
+                    <i class="fa-solid fa-file-pdf" style="margin-right: 8px;"></i> Generate Resume with Skills
+                </a>
+
+                <a href="{{ url_for('logout') }}" class="btn glass-btn logout-action-btn" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 1rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Top Level Stats Grid (Dynamic) -->
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+
+            <!-- Overall Proficiency Card -->
+            <div class="stat-card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2rem; border-radius: 16px; display: flex; align-items: center; gap: 1.5rem;">
+                <div class="stat-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div>
+                    <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Overall Proficiency</div>
+                    <div style="color: white; font-size: 2.5rem; font-weight: 800; line-height: 1;">{{ overall_proficiency }}%</div>
+                </div>
+            </div>
+
+            <!-- Assessments Taken Card -->
+            <div class="stat-card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2rem; border-radius: 16px; display: flex; align-items: center; gap: 1.5rem;">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <div style="color: #94a3b8; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Assessments Taken</div>
+                    <div style="color: white; font-size: 2.5rem; font-weight: 800; line-height: 1;">{{ assessments_taken }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verified Skills Breakdown Section (Dynamic) -->
+        <div class="glass-card-dark" style="padding: 2.5rem; border-radius: 16px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);">
+            <h3 style="color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                Verified Skills Breakdown
+            </h3>
+
+            <div class="skills-list" style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+                {% set skills_map = [ ('Python', user_data.python_score, 'fa-brands fa-python', '#38bdf8'), ('Java', user_data.java_score, 'fa-brands fa-java', '#f87171'), ('C', user_data.c_score, 'fa-solid fa-c', '#818cf8'), ('C++', user_data.cpp_score, 'fa-solid fa-file-code',
+                '#60a5fa'), ('JavaScript', user_data.javascript_score, 'fa-brands fa-js', '#fbbf24'), ('HTML', user_data.html_score, 'fa-brands fa-html5', '#f97316'), ('CSS', user_data.css_score, 'fa-brands fa-css3-alt', '#3b82f6'), ('React', user_data.react_score,
+                'fa-brands fa-react', '#61dafb'), ('Node.js', user_data.nodejs_score, 'fa-brands fa-node', '#10b981'), ('MySQL', user_data.mysql_score, 'fa-solid fa-database', '#f59e0b'), ('Data Structures', user_data.dsa_score, 'fa-solid fa-diagram-project',
+                '#c084fc'), ('Artificial Intelligence', user_data.ai_score, 'fa-solid fa-brain', '#ec4899') ] %} {% set has_skills = false %} {% for name, score, icon, color in skills_map %} {% if score > 0 %} {% set has_skills = true %}
+                <!-- Standardize out of 30. Adjust to 50 if your quiz sends 50. -->
+                {% set percent = ((score / 30) * 100) | round | int %}
+
+                <div class="skill-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; color: #f8fafc; font-weight: 600; font-size: 1.1rem;">
+                        <span><i class="{{ icon }}" style="color: {{ color }}; width: 30px;"></i> {{ name }}</span>
+                        <span>{{ percent }}% <span style="color: #64748b; font-size: 0.9rem; margin-left: 8px;">({{ score }}/30)</span></span>
+                    </div>
+                    <div style="width: 100%; background: #1e293b; border-radius: 8px; height: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="width: {{ percent }}%; background: {{ color }}; height: 100%; border-radius: 8px; box-shadow: 0 0 10px {{ color }}40;"></div>
+                    </div>
+                </div>
+                {% endif %} {% endfor %} {% if not has_skills %}
+                <div style="text-align: center; color: #94a3b8; padding: 3rem 0;">
+                    <i class="fa-solid fa-clipboard-list" style="font-size: 3.5rem; margin-bottom: 1.5rem; color: #334155;"></i>
+                    <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">You haven't completed assessments yet.</p>
+                    <a href="{{ url_for('analyze_skill') }}" class="btn btn-primary" style="padding: 0.75rem 2rem; border-radius: 8px; font-weight: 600;">Start Your Assessment</a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

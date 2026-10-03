@@ -1,0 +1,38 @@
+<!-- templates/help.html -->
+{% extends 'base.html' %} {% block title %}Help & Support | Skill Analyzer{% endblock %} {% block content %}
+<div class="help-page-wrapper">
+    <div class="help-container">
+        <h2 class="section-title">Help & Frequently Asked Questions</h2>
+        <p class="lead-text">Find answers to common questions about scoring, assessments, and resume generation.</p>
+
+        <div class="faq-list">
+            <!-- FAQ Card 1 -->
+            <div class="faq-item glass-card-dark">
+                <h3><i class="fa-solid fa-calculator"></i> How is my overall score calculated?</h3>
+                <p>Your overall score is an aggregate average of every skill assessment you have completed. If you score 40% in Python and 80% in Git, your overall base score will reflect 60%.</p>
+            </div>
+
+            <!-- FAQ Card 2 -->
+            <div class="faq-item glass-card-dark">
+                <h3><i class="fa-solid fa-rotate-right"></i> Can I retake an assessment to improve my score?</h3>
+                <p>Yes. If you are unhappy with your score, you can retake the assessment. However, the system enforces a 24-hour cooldown period between attempts for the same topic.</p>
+            </div>
+
+            <!-- FAQ Card 3 -->
+            <div class="faq-item glass-card-dark">
+                <h3><i class="fa-solid fa-wand-magic-sparkles"></i> How does the AI Resume Upgrade work?</h3>
+                <p>When you upload an existing PDF or DOCX file, our backend extracts the raw text. It identifies areas where bullet points lack action verbs or quantifiable metrics, and suggests stronger alternatives before you generate the final PDF.</p>
+            </div>
+        </div>
+
+        <!-- Support Call-to-Action -->
+        <div class="support-cta glass-card-dark">
+            <h3>Still need help?</h3>
+            <p>Our support team is here to assist you with any technical issues or account questions.</p>
+            <a href="mailto:support@skillanalyzer.com" class="btn btn-primary glass-btn">
+                <i class="fa-regular fa-envelope" style="margin-right: 8px;"></i> Email Support
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

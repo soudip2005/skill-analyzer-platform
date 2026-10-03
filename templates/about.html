@@ -1,0 +1,49 @@
+<!-- templates/about.html -->
+{% extends 'base.html' %} {% block title %}About Us | Skill Analyzer{% endblock %} {% block content %}
+<div class="about-page-wrapper">
+    <div class="about-container glass-card-dark">
+        <h2 class="section-title">About Skill Analyzer</h2>
+        <p class="lead-text">Bridging the gap between claiming a skill on a resume and actually proving it.</p>
+
+        <div class="about-grid">
+            <!-- Left Column: About & Tech Stack -->
+            <div class="about-text-section">
+                <h3>How It Works</h3>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fa-solid fa-stopwatch"></i>
+                        <span><strong>Analyze:</strong> Take a timed 30-question test consisting of MCQs, fill-in-the-blanks, and live code debugging.</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span><strong>Track:</strong> View your detailed performance analytics and radar charts on your private dashboard.</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span><strong>Build:</strong> Automatically generate an ATS-friendly PDF resume that highlights your verified scores.</span>
+                    </li>
+                </ul>
+
+                <h3 class="mt-2">Technology Stack</h3>
+                <p class="tech-text">This platform is engineered using a robust Flask Python backend, a PostgreSQL relational database for secure data management, and dynamic HTML/CSS/JS with a modern glassmorphism user interface.</p>
+            </div>
+
+            <!-- Right Column: Contact Form -->
+            <div class="contact-section">
+                <h3>Contact Us</h3>
+                <p class="contact-subtext">Have questions, need support, or want to collaborate? Drop us a message below.</p>
+
+                <form action="#" method="POST" class="contact-form">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email Address" required>
+                    <textarea name="message" rows="5" placeholder="How can we help you?" required></textarea>
+
+                    <button type="submit" class="btn btn-primary glass-btn">
+                        Send Message <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

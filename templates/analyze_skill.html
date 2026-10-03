@@ -1,0 +1,30 @@
+<!-- templates/analyze_skill.html -->
+{% extends 'base.html' %} {% block title %}Analyze Skill | Choose a Topic{% endblock %} {% block content %}
+<div class="analyze-page-wrapper">
+    <div class="analyze-header">
+        <h2>Select a Skill to Analyze</h2>
+        <p>Each test contains 20 MCQs, 5 Fill-in-the-Blanks, and 5 Debugging challenges.</p>
+    </div>
+
+    <div class="topic-grid">
+        <!-- Loop through the new 'skills' list -->
+        {% for skill in skills %}
+        <div class="topic-card glass-card">
+
+            <!-- Dynamically inject the unique icon for each skill -->
+            <div class="card-icon"><i class="{{ skill.icon }}"></i></div>
+
+            <!-- Dynamically inject the skill name -->
+            <h3>{{ skill.name }}</h3>
+
+            <p class="score-text">Highest Score: <span>Not attempted</span></p>
+
+            <!-- Pass the skill name to the quiz interface route -->
+            <a href="{{ url_for('quiz_interface', topic=skill.name) }}" class="btn btn-primary glass-btn">
+                Start Assessment <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

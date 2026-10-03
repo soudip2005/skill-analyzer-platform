@@ -1,0 +1,425 @@
+{% extends 'base.html' %} {% block title %}Resume Builder | Skill Analyzer{% endblock %} {% block content %}
+<div class="resume-page-wrapper">
+
+    <!-- HERO SECTION -->
+    <div class="resume-hero-inner">
+        <h1 style="font-size: 3.5rem; font-weight: 800; color: white; margin-bottom: 1rem;">Build Your Resume</h1>
+        <p style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 2.5rem; line-height: 1.6;">Your skills define your potential. Let your work speak for itself by generating an ATS-optimized professional resume, or upgrade your current one based on your verified strengths.</p>
+        <div class="hero-buttons" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+            <button class="btn-hero btn-create" onclick="showBuilder('create')">Create Your Resume</button>
+            <button class="btn-hero btn-upgrade" onclick="showBuilder('upgrade')">Upgrade Current Resume</button>
+        </div>
+    </div>
+
+    <!-- INITIAL PLACEHOLDER -->
+    <div id="initial-placeholder" style="max-width: 1000px; margin: 0 auto; text-align: center;">
+        <div class="form-section" style="padding: 4rem 2rem;">
+            <h3 style="color: white; font-size: 2.25rem; font-weight: 800; margin-bottom: 1rem;">How It Works</h3>
+            <p style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 4rem;">Build a professional, ATS-friendly resume in 3 easy steps.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                <div style="padding: 2rem 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
+                    <div style="width: 70px; height: 70px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem auto;">
+                        <i class="fa-solid fa-hand-pointer"></i>
+                    </div>
+                    <h4 style="color: white; font-size: 1.25rem; margin-bottom: 0.75rem;">1. Choose a Path</h4>
+                    <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6;">Select 'Create' to build from scratch or 'Upgrade' to auto-fill using your existing resume.</p>
+                </div>
+
+                <div style="padding: 2rem 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
+                    <div style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem auto;">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h4 style="color: white; font-size: 1.25rem; margin-bottom: 0.75rem;">2. Auto-Sync Skills</h4>
+                    <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6;">We automatically import and highlight the skills you have verified through our platform.</p>
+                </div>
+
+                <div style="padding: 2rem 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
+                    <div style="width: 70px; height: 70px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem auto;">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <h4 style="color: white; font-size: 1.25rem; margin-bottom: 0.75rem;">3. Export PDF</h4>
+                    <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6;">Download a perfectly formatted, ATS-optimized PDF ready for job applications.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUILDER CONTAINER -->
+    <div class="builder-container" id="resume-builder">
+
+        <!-- Upgrade File Upload -->
+        <div class="form-section upload-area" id="upload-section">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 3rem; color: #38bdf8; margin-bottom: 1rem;"></i>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Upload Your Existing Resume</h3>
+            <p style="color: #94a3b8; margin-bottom: 1.5rem;">We will detect your data and populate the editor for you to modify.</p>
+            <input type="file" id="resume-upload" class="resume-form-control" style="max-width: 400px; margin: 0 auto; background: rgba(0,0,0,0.2);" accept=".pdf,.doc,.docx">
+        </div>
+
+        <!-- MAIN FORM -->
+        <form action="{{ url_for('resume_buildup') }}" method="POST" id="resume-form" style="display: none;">
+
+            <!-- Verified Skills Block -->
+            <div class="form-section" style="border: 1px solid rgba(16, 185, 129, 0.3);">
+                <h3 style="color: white; font-size: 1.25rem; margin-bottom: 1rem;">
+                    <i class="fa-solid fa-check-circle" style="color: #10b981; margin-right: 8px;"></i> Your Verified Skills
+                </h3>
+                <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem;">These skills have been verified through your assessments and will be highlighted on your resume.</p>
+                <div>
+                    {% if verified_skills %} {% for skill in verified_skills %}
+                    <span class="verified-badge"><i class="fa-solid fa-star" style="font-size: 0.75rem;"></i> {{ skill }}</span> {% endfor %} {% else %}
+                    <div style="color: #fca5a5; background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                        You haven't passed any assessments yet. Your resume will be generated without the Verified Skills section.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Templates -->
+            <div class="form-section">
+                <h3 class="resume-section-title">1. Select ATS Template</h3>
+                <div class="grid-2">
+                    <label class="template-card selected" id="card-tpl-1">
+                        <input type="radio" name="template" value="modern" checked style="display:none;" onchange="selectTemplate(1)">
+                        <i class="fa-solid fa-file-lines" style="font-size: 2.5rem; color: #38bdf8; margin-bottom: 1rem;"></i>
+                        <h4 style="color: white;">Modern ATS (Recommended)</h4>
+                        <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.5rem;">Clean, single-column layout optimized for parsers.</p>
+                    </label>
+                    <label class="template-card" id="card-tpl-2">
+                        <input type="radio" name="template" value="classic" style="display:none;" onchange="selectTemplate(2)">
+                        <i class="fa-solid fa-file-invoice" style="font-size: 2.5rem; color: #38bdf8; margin-bottom: 1rem;"></i>
+                        <h4 style="color: white;">Classic Professional</h4>
+                        <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.5rem;">Traditional structure favored by corporate recruiters.</p>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Personal Info -->
+            <div class="form-section">
+                <h3 class="resume-section-title">2. Contact Information</h3>
+                <div class="grid-2">
+                    <div class="resume-form-group"><label class="resume-form-label">1) Full Name</label><input type="text" name="full_name" id="field_name" class="resume-form-control" value="{{ session.get('user', '') }}" required></div>
+                    <div class="resume-form-group"><label class="resume-form-label">2) GitHub Link</label><input type="url" name="github" id="field_github" class="resume-form-control" placeholder="https://github.com/username"></div>
+                    <div class="resume-form-group"><label class="resume-form-label">3) Phone Number</label><input type="tel" name="phone" id="field_phone" class="resume-form-control" required></div>
+                    <div class="resume-form-group"><label class="resume-form-label">4) Gmail</label><input type="email" name="email" id="field_email" class="resume-form-control" required></div>
+                    <div class="resume-form-group" style="grid-column: span 2;"><label class="resume-form-label">5) LinkedIn Link</label><input type="url" name="linkedin" id="field_linkedin" class="resume-form-control" placeholder="https://linkedin.com/in/username"></div>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="form-section">
+                <h3 class="resume-section-title">3. Education</h3>
+                <div class="grid-2">
+                    <div class="resume-form-group">
+                        <label class="resume-form-label">6) Select Degree</label>
+                        <select name="degree" id="field_degree" class="resume-form-control" required>
+                            <option value="" disabled selected>Select your degree...</option>
+                            <option value="B.Tech">B.Tech</option>
+                            <option value="B.Sc">B.Sc</option>
+                            <option value="BCA">BCA</option>
+                            <option value="M.Tech">M.Tech</option>
+                            <option value="MCA">MCA</option>
+                            <option value="Diploma">Diploma</option>
+                        </select>
+                    </div>
+                    <div class="resume-form-group">
+                        <label class="resume-form-label">Stream / Major</label>
+                        <input type="text" name="stream" id="field_stream" class="resume-form-control" placeholder="e.g., Computer Science" required>
+                    </div>
+                    <div class="resume-form-group">
+                        <label class="resume-form-label">College / University Name</label>
+                        <input type="text" name="college" id="field_college" class="resume-form-control" placeholder="Full name of your institution" required>
+                    </div>
+                    <div class="resume-form-group">
+                        <label class="resume-form-label">Year of Passing</label>
+                        <input type="number" name="passing_year" id="field_passing" class="resume-form-control" placeholder="e.g., 2025" min="1980" max="2030" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="form-section">
+                <h3 class="resume-section-title">4. Projects (Min 1, Max 2)</h3>
+                <div class="resume-form-group">
+                    <label class="resume-form-label">7) Project 1: Name & Link</label>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                        <input type="text" name="p1_name" id="field_p1_name" class="resume-form-control" placeholder="Project Name" required>
+                        <input type="url" name="p1_link" class="resume-form-control" placeholder="Live Link / GitHub Repo">
+                    </div>
+                    <label class="resume-form-label">Project 1 Description</label>
+                    <textarea name="p1_desc" id="field_p1_desc" class="resume-form-control" rows="3" required placeholder="Describe technologies used and impact..."></textarea>
+                </div>
+
+                <div id="project-2-container" style="display: none; margin-top: 2rem; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 2rem;">
+                    <label class="resume-form-label">Project 2: Name & Link (Optional)</label>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                        <input type="text" name="p2_name" class="resume-form-control" placeholder="Project Name">
+                        <input type="url" name="p2_link" class="resume-form-control" placeholder="Live Link / GitHub Repo">
+                    </div>
+                    <label class="resume-form-label">Project 2 Description</label>
+                    <textarea name="p2_desc" class="resume-form-control" rows="3"></textarea>
+                </div>
+
+                <button type="button" id="add-proj-btn" class="btn btn-upgrade" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="toggleProject2()">+ Add Second Project</button>
+            </div>
+
+            <!-- Skills -->
+            <div class="form-section">
+                <h3 class="resume-section-title">5. Technical Skills</h3>
+                <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 1.5rem;">8) Select your skills from the domains below. Click multiple options freely. You must select skills from at least 4 domains.</p>
+
+                <div id="domain-error" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: 600;">
+                    <i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> Please select skills from at least 4 different domains before submitting.
+                </div>
+
+                <div class="grid-2">
+
+                    <!-- Domain 1 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">1. Programming Languages</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['C', 'C++', 'Java', 'Python', 'JavaScript', 'TypeScript'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_lang" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Domain 2 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">2. Databases</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['MySQL', 'PostgreSQL', 'MongoDB', 'Oracle Database', 'SQLite', 'Microsoft SQL Server', 'Firebase Firestore'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_db" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Domain 3 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">3. Frontend Development</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['HTML5', 'CSS3', 'React.js', 'Next.js', 'Tailwind CSS', 'Bootstrap', 'Angular', 'Vite'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_frontend" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Domain 4 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">4. Backend Development</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['Node.js', 'Express.js', 'Django', 'Flask', 'FastAPI', 'REST API', 'Spring Boot', 'GraphQL', 'NestJS', 'JWT Authentication'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_backend" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Domain 5 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">5. Cloud & DevOps</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['AWS', 'Microsoft Azure', 'GCP', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI/CD', 'Vercel', 'Salesforce'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_cloud" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Domain 6 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">6. Version Control & Tools</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['Git', 'GitHub', 'GitLab', 'VS Code', 'IntelliJ IDEA', 'Postman'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_tools" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Domain 7 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">7. AI & Machine Learning</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['NumPy', 'Pandas', 'Scikit-learn', 'TensorFlow', 'PyTorch', 'OpenCV', 'MediaPipe', 'NLP'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_ai" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Domain 8 -->
+                    <div class="resume-form-group skill-domain-group">
+                        <label class="resume-form-label">8. Software Engineering</label>
+                        <div class="skill-checkbox-grid">
+                            {% for skill in ['DSA', 'OOP', 'DBMS', 'Operating Systems', 'Computer Networks', 'SDLC', 'Problem Solving', 'API Integration', 'Unit Testing', 'Agile Methodology'] %}
+                            <label class="skill-pill"><input type="checkbox" name="skills_core" value="{{ skill }}"><span>{{ skill }}</span></label> {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Experience & Certifications -->
+            <div class="form-section">
+                <h3 class="resume-section-title">6. Experience & Certifications</h3>
+                <div class="grid-2">
+                    <div class="resume-form-group">
+                        <label class="resume-form-label">9) Experience</label>
+                        <textarea name="experience" id="field_experience" class="resume-form-control" rows="5" placeholder="Company Name - Role (Duration)&#10;• Responsibility 1&#10;• Responsibility 2"></textarea>
+                    </div>
+                    <div class="resume-form-group">
+                        <label class="resume-form-label">10) Certificates</label>
+                        <textarea name="certificates" id="field_certificates" class="resume-form-control" rows="5" placeholder="• AWS Certified Solutions Architect&#10;• Full Stack Web Development Boot Camp"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Action Buttons -->
+            <div style="display: flex; gap: 1.5rem; margin-top: 2rem;">
+                <button type="button" class="btn btn-upgrade" style="flex: 1; border-color: #38bdf8; color: #38bdf8; padding: 1.25rem; font-size: 1.15rem; border-radius: 12px;" onclick="openPreview()">
+                    <i class="fa-solid fa-eye" style="margin-right: 8px;"></i> View & Edit
+                </button>
+                <button type="submit" class="auth-submit-btn" style="flex: 1; margin-bottom: 0; padding: 1.25rem; font-size: 1.15rem;">
+                    <i class="fa-solid fa-download" style="margin-right: 8px;"></i> Download Professional Resume
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- PREVIEW & EDIT MODAL -->
+<div class="preview-modal-overlay" id="previewModal">
+    <div class="preview-modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+            <h3 style="color: white; font-size: 1.5rem;"><i class="fa-solid fa-pen-to-square" style="color: #38bdf8; margin-right: 10px;"></i> Review Your Resume Data</h3>
+            <button type="button" onclick="closePreview()" style="background: none; border: none; color: #fca5a5; font-size: 1.5rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <p style="color: #94a3b8; margin-bottom: 1.5rem;">Review and refine your textual content before generating the final PDF. Make sure your summaries and bullet points are perfectly formatted.</p>
+
+        <div class="resume-form-group">
+            <label class="resume-form-label">Professional Summary Review</label>
+            <textarea id="modal_summary" class="resume-form-control" rows="4" placeholder="Your summary will appear here..."></textarea>
+        </div>
+        <div class="resume-form-group">
+            <label class="resume-form-label">Experience Review</label>
+            <textarea id="modal_experience" class="resume-form-control" rows="5"></textarea>
+        </div>
+        <div class="resume-form-group">
+            <label class="resume-form-label">Project Descriptions</label>
+            <textarea id="modal_projects" class="resume-form-control" rows="5"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+            <button type="button" class="btn btn-upgrade" style="padding: 0.8rem 1.5rem;" onclick="closePreview()">Cancel</button>
+            <button type="button" class="btn btn-create" style="padding: 0.8rem 1.5rem; background: #38bdf8; color: white;" onclick="savePreview()">Save & Close</button>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+    function showBuilder(mode) {
+        const container = document.getElementById('resume-builder');
+        const uploadSection = document.getElementById('upload-section');
+        const form = document.getElementById('resume-form');
+        const placeholder = document.getElementById('initial-placeholder');
+
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
+
+        container.style.display = 'block';
+        container.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+        if (mode === 'upgrade') {
+            uploadSection.style.display = 'block';
+            form.style.display = 'none';
+        } else {
+            uploadSection.style.display = 'none';
+            form.style.display = 'block';
+        }
+    }
+
+    document.getElementById('resume-upload').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const btn = document.createElement('div');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Extracting data...';
+            btn.style.color = '#38bdf8';
+            btn.style.marginTop = '1rem';
+            this.parentNode.appendChild(btn);
+
+            setTimeout(() => {
+                document.getElementById('upload-section').style.display = 'none';
+                document.getElementById('resume-form').style.display = 'block';
+                alert("Data extracted successfully! You can now modify your details.");
+            }, 1500);
+        }
+    });
+
+    function selectTemplate(num) {
+        document.getElementById('card-tpl-1').classList.remove('selected');
+        document.getElementById('card-tpl-2').classList.remove('selected');
+        document.getElementById('card-tpl-' + num).classList.add('selected');
+    }
+
+    function toggleProject2() {
+        const p2 = document.getElementById('project-2-container');
+        const btn = document.getElementById('add-proj-btn');
+        if (p2.style.display === 'none') {
+            p2.style.display = 'block';
+            btn.innerHTML = '- Remove Second Project';
+            btn.style.borderColor = '#ef4444';
+            btn.style.color = '#ef4444';
+        } else {
+            p2.style.display = 'none';
+            btn.innerHTML = '+ Add Second Project';
+            btn.style.borderColor = 'white';
+            btn.style.color = 'white';
+            document.getElementsByName('p2_name')[0].value = '';
+            document.getElementsByName('p2_link')[0].value = '';
+            document.getElementsByName('p2_desc')[0].value = '';
+        }
+    }
+
+    // Modal Logic
+    function openPreview() {
+        // Sync main form data into modal for review
+        document.getElementById('modal_experience').value = document.getElementById('field_experience').value;
+
+        let projText = "Project 1:\n" + document.getElementById('field_p1_desc').value;
+        if (document.getElementById('project-2-container').style.display === 'block') {
+            projText += "\n\nProject 2:\n" + document.getElementsByName('p2_desc')[0].value;
+        }
+        document.getElementById('modal_projects').value = projText;
+
+        document.getElementById('previewModal').style.display = 'flex';
+    }
+
+    function closePreview() {
+        document.getElementById('previewModal').style.display = 'none';
+    }
+
+    function savePreview() {
+        // Sync modified modal data back to main form
+        document.getElementById('field_experience').value = document.getElementById('modal_experience').value;
+        closePreview();
+    }
+
+    // Form Validation logic for the 4-domain rule using Checkboxes
+    document.getElementById('resume-form').addEventListener('submit', function(e) {
+        const domainContainers = document.querySelectorAll('.skill-domain-group');
+        let selectedCount = 0;
+
+        domainContainers.forEach(group => {
+            const checkedBoxes = group.querySelectorAll('input[type="checkbox"]:checked');
+            if (checkedBoxes.length > 0) {
+                selectedCount++;
+            }
+        });
+
+        if (selectedCount < 4) {
+            e.preventDefault(); // Stop form submission
+            const errorBox = document.getElementById('domain-error');
+            errorBox.style.display = 'block';
+            errorBox.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    });
+</script>
+{% endblock %}

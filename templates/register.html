@@ -1,0 +1,81 @@
+{% extends 'base.html' %} {% block title %}Register | Skill Analyzer{% endblock %} {% block content %}
+<div class="auth-page-wrapper">
+    <div class="auth-card">
+        <div class="auth-left">
+            <div class="auth-quote">
+                <div class="auth-quote-text">"Take the leap and let your verified work speak for itself."</div>
+                <div class="auth-quote-author"><i class="fa-solid fa-rocket"></i> Join SkillAnalyzer Today</div>
+            </div>
+        </div>
+
+        <div class="auth-right" style="padding: 3rem 4rem;">
+            <!-- Embedded Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %}
+            <div style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 10px;">
+                {% for category, message in messages %}
+                <div class="flash-alert flash-{{ category }}" style="position: relative; top: 0; left: 0; transform: none; width: 100%;">
+                    {{ message }}
+                    <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %} {% endwith %}
+
+            <div class="auth-header" style="margin-bottom: 1.5rem;">
+                <h2>Create an Account</h2>
+                <p>Set up your profile and security preferences.</p>
+            </div>
+
+            <form class="auth-form" action="{{ url_for('register') }}" method="POST">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your legal name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Choose a strong password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="" disabled selected>Select...</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="form-group" style="flex: 1; margin: 0;">
+                        <label for="color">Security Color</label>
+                        <select id="color" name="color" required>
+                            <option value="" disabled selected>Pick a color</option>
+                            <option value="Red">Red</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Green">Green</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="flex: 1; margin: 0;">
+                        <label for="flower">Security Flower</label>
+                        <select id="flower" name="flower" required>
+                            <option value="" disabled selected>Pick a flower</option>
+                            <option value="Rose">Rose</option>
+                            <option value="Tulip">Tulip</option>
+                            <option value="Sunflower">Sunflower</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn">Create Secure Account</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="{{ url_for('login') }}">Log in here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

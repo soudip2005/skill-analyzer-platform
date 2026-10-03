@@ -1,0 +1,47 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %} {% block title %}Home | Skill Analyzer{% endblock %} {% block content %}
+<!-- Hero Section with Background Image -->
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="animated-headline">
+            <span class="loop-text text-1">Prove Your Skills</span>
+            <span class="loop-text text-2">Build Your Career</span>
+            <span class="loop-text text-3">Land Your Dream Job</span>
+        </h1>
+
+        <p>
+            Your skills define your potential, but your courage to prove them defines your future take the leap and let your work speak for itself.
+        </p>
+
+        <p>
+            Take deep-dive technical assessments to analyze your true proficiency, then automatically generate an optimized resume based on your verified strengths.
+        </p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('analyze_skill') }}" class="btn btn-solid-white">Analyze Your Skills</a>
+            <a href="{{ url_for('resume_buildup') }}" class="btn btn-solid-white">Build Your Resume</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section (Below the fold) -->
+<section class="features-section">
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fa-solid fa-list-check"></i></div>
+            <h3>30-Question Deep Dives</h3>
+            <p>Test your knowledge with a mix of MCQs, fill-in-the-blanks, and live code debugging to prove your expertise.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fa-solid fa-chart-pie"></i></div>
+            <h3>Detailed Analytics</h3>
+            <p>Identify your weak points instantly. View comprehensive radar charts to know exactly where to focus your study time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fa-solid fa-file-pdf"></i></div>
+            <h3>Smart Resume Builder</h3>
+            <p>Pull your verified skill scores directly into a clean, ATS-friendly PDF resume to stand out to recruiters.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

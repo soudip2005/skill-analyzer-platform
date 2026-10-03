@@ -1,0 +1,264 @@
+{% extends 'base.html' %} {% block title %}{{ topic }} Assessment | Skill Analyzer{% endblock %} {% block content %}
+<!-- Prism.js Syntax Highlighting Theme (Tomorrow Night Dark) -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<style>
+    /* --- MODERN QUIZ UI STYLES --- */
+    
+    .quiz-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3rem;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    
+    .quiz-header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .quiz-section {
+        background: transparent !important;
+    }
+    
+    .question-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 2rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .question-text {
+        color: #ffffff !important;
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+    /* Code Snippet Box Styling */
+    
+    .code-snippet-box {
+        background: #1d1f21;
+        border-radius: 12px;
+        margin: 1rem 0 1.5rem 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .code-snippet-header {
+        background: #25282c;
+        padding: 10px 16px;
+        color: #cbd5e1;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    /* Custom Clickable Option Cards */
+    
+    .modern-radio {
+        display: block;
+        cursor: pointer;
+        margin-bottom: 0.75rem;
+    }
+    
+    .modern-radio input[type="radio"] {
+        display: none;
+    }
+    
+    .radio-box {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+    
+    .modern-radio:hover .radio-box {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+    }
+    
+    .modern-radio input[type="radio"]:checked+.radio-box {
+        background: rgba(79, 70, 229, 0.15);
+        border-color: #818cf8;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+    
+    .radio-circle {
+        width: 22px;
+        height: 22px;
+        border: 2px solid #64748b;
+        border-radius: 50%;
+        margin-right: 15px;
+        position: relative;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+    
+    .modern-radio input[type="radio"]:checked+.radio-box .radio-circle {
+        border-color: #818cf8;
+    }
+    
+    .modern-radio input[type="radio"]:checked+.radio-box .radio-circle::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background: #818cf8;
+        border-radius: 50%;
+    }
+</style>
+
+<div class="auth-page-wrapper" style="align-items: flex-start; padding: 4rem 2rem;">
+    <div class="quiz-container">
+
+        <!-- Quiz Header with Timer -->
+        <div class="quiz-header-bar">
+            <div>
+                <h2 style="color: white; font-size: 2.25rem; font-weight: 800; margin-bottom: 0.25rem;">{{ topic }} Skill Assessment</h2>
+                <p style="color: #94a3b8;">Complete all questions to verify your skill level.</p>
+            </div>
+            <div style="text-align: right;">
+                <div id="timer" style="background: rgba(79, 70, 229, 0.2); border: 1px solid rgba(79, 70, 229, 0.4); padding: 0.75rem 1.5rem; border-radius: 12px; color: #818cf8; font-weight: 700; font-size: 1.5rem; display: inline-block; box-shadow: 0 0 15px rgba(79, 70, 229, 0.2);">
+                    25:00
+                </div>
+                <div style="color: #64748b; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600; text-transform: uppercase;">Time Remaining</div>
+            </div>
+        </div>
+
+        <form action="{{ url_for('submit_quiz') }}" method="POST" id="quiz-form">
+            <input type="hidden" name="topic" value="{{ topic }}">
+
+            <div class="quiz-section">
+                <h3 style="color: #818cf8; font-size: 1.35rem; margin-bottom: 1.5rem; border-left: 4px solid #4f46e5; padding-left: 12px; letter-spacing: 0.5px;">Section 1: Multiple Choice</h3>
+
+                {% for q in questions %}
+                <div class="question-card">
+                    <p class="question-text">
+                        <span style="color: #818cf8; margin-right: 8px;">{{ loop.index }}.</span> {{ q.question_text }}
+                    </p>
+
+                    <!-- Code Snippet Render Block -->
+                    {% if q.code_snippet %}
+                    <!-- Smart Language Mapping -->
+                    {% set lang = topic | lower %} {% if lang == 'c++' %}{% set lang = 'cpp' %}{% endif %} {% if lang == 'artificial intelligence' or lang == 'machine learning' %}{% set lang = 'python' %}{% endif %} {% if lang == 'data structures' or lang == 'dsa' %}{% set
+                    lang = 'java' %}{% endif %} {% if lang == 'mysql' %}{% set lang = 'sql' %}{% endif %}
+
+                    <div class="code-snippet-box">
+                        <div class="code-snippet-header">
+                            <i class="fa-solid fa-code" style="color: #818cf8;"></i> {{ topic }}
+                        </div>
+                        <pre style="margin: 0; padding: 1.25rem; background: transparent; border-radius: 0; overflow-x: auto;"><code class="language-{{ lang }}" style="font-family: 'Consolas', 'Monaco', monospace; font-size: 0.95rem; line-height: 1.5;">{{ q.code_snippet }}</code></pre>
+                    </div>
+                    {% endif %}
+
+
+                    <div class="options-container">
+                        <label class="modern-radio">
+                            <input type="radio" name="q_{{ q.id }}" value="A" required>
+                            <div class="radio-box">
+                                <span class="radio-circle"></span>
+                                <span><strong>A)</strong> &nbsp;{{ q.option_a }}</span>
+                            </div>
+                        </label>
+
+                        <label class="modern-radio">
+                            <input type="radio" name="q_{{ q.id }}" value="B">
+                            <div class="radio-box">
+                                <span class="radio-circle"></span>
+                                <span><strong>B)</strong> &nbsp;{{ q.option_b }}</span>
+                            </div>
+                        </label>
+
+                        <label class="modern-radio">
+                            <input type="radio" name="q_{{ q.id }}" value="C">
+                            <div class="radio-box">
+                                <span class="radio-circle"></span>
+                                <span><strong>C)</strong> &nbsp;{{ q.option_c }}</span>
+                            </div>
+                        </label>
+
+                        <label class="modern-radio">
+                            <input type="radio" name="q_{{ q.id }}" value="D">
+                            <div class="radio-box">
+                                <span class="radio-circle"></span>
+                                <span><strong>D)</strong> &nbsp;{{ q.option_d }}</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="auth-submit-btn" style="margin-top: 2rem; font-size: 1.15rem; letter-spacing: 1px;">
+                <i class="fa-solid fa-check-double" style="margin-right: 8px;"></i> Submit Assessment & View Results
+            </button>
+        </form>
+
+    </div>
+</div>
+{% endblock %} {% block scripts %}
+<!-- Prism.js Core and Python Language Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+
+
+<script>
+    // 25-minute countdown timer
+    let timeRemaining = 25 * 60;
+    const timerElement = document.getElementById('timer');
+    const quizForm = document.getElementById('quiz-form');
+
+    const countdown = setInterval(() => {
+        if (timeRemaining <= 0) {
+            clearInterval(countdown);
+            quizForm.submit(); // Auto-submit when time expires
+        }
+
+        let minutes = Math.floor(timeRemaining / 60);
+        let seconds = timeRemaining % 60;
+
+        timerElement.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        // Add urgency color when under 3 minutes
+        if (timeRemaining < 180) {
+            timerElement.style.color = '#ef4444';
+            timerElement.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            timerElement.style.background = 'rgba(239, 68, 68, 0.2)';
+            timerElement.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.2)';
+        }
+
+        timeRemaining--;
+    }, 1000);
+</script>
+{% endblock %}

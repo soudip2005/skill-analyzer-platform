@@ -1,0 +1,85 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Skill Analyzer{% endblock %}</title>
+
+    <!-- Modern Professional Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Link to the global stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> {% block head_styles %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- PREMIUM NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="{{ url_for('home') }}">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>SkillAnalyzer</span>
+                </a>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('analyze_skill') }}" class="nav-link {% if request.endpoint == 'analyze_skill' %}active{% endif %}">Analyze Skill</a></li>
+                <li><a href="{{ url_for('resume_buildup') }}" class="nav-link {% if request.endpoint == 'resume_buildup' %}active{% endif %}">Resume Buildup</a></li>
+                <li><a href="{{ url_for('about') }}" class="nav-link {% if request.endpoint == 'about' %}active{% endif %}">About</a></li>
+                <li><a href="{{ url_for('help_page') }}" class="nav-link {% if request.endpoint == 'help_page' %}active{% endif %}">Help</a></li>
+
+
+                <!-- Dynamic Authentication Links -->
+                {% if 'user' in session %}
+                <!-- If Logged In: Show Profile Avatar only -->
+                <li>
+                    <a href="{{ url_for('profile') }}" class="profile-logo-link" title="My Profile">
+                        <div class="avatar-circle">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                    </a>
+                </li>
+                {% else %}
+                <!-- If Logged Out: Show Login Button -->
+                <li>
+                    <a href="{{ url_for('login') }}" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.95rem; margin-left: 1rem;">Log In</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Messages Container -->
+    <div class="flash-messages-container">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            <i class="fa-solid fa-circle-info" style="margin-right: 8px;"></i> {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+    </div>
+
+    <!-- Main Content Area -->
+    <main>
+
+        {% block content %} {% endblock %}
+    </main>
+
+    <!-- Global Footer -->
+    <footer>
+        <p>&copy; 2026 Skill Analyzer Platform. All rights reserved.</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
