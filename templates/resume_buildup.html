@@ -106,9 +106,33 @@
                 </div>
             </div>
 
+            <!-- Professional Summary (NEW) -->
+            <div class="form-section">
+                <h3 class="resume-section-title">3. Professional Summary</h3>
+
+                <div class="resume-form-group">
+                    <label class="resume-form-label" for="summaryTemplate">Choose a Starting Template (Optional)</label>
+                    <select id="summaryTemplate" class="resume-form-control" onchange="loadSummaryTemplate()">
+                        <option value="">-- Select a Template --</option>
+                        <option value="student">Student / Recent Grad</option>
+                        <option value="motivated">Motivated Graduate</option>
+                        <option value="experienced">Experienced Software Engineer</option>
+                        <option value="results_driven">Results-Driven Professional</option>
+                        <option value="transitioning">Career Transition</option>
+                        <option value="internship">Internship Seeker</option>
+                    </select>
+                </div>
+
+                <div class="resume-form-group">
+                    <label class="resume-form-label" for="field_summary">Your Summary</label>
+                    <textarea name="professional_summary" id="field_summary" class="resume-form-control" rows="5" placeholder="Write your professional summary here, or select a template above to get started..." required></textarea>
+                    <small style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.5rem; display: block;">Don't forget to replace the [bracketed] information with your actual details!</small>
+                </div>
+            </div>
+
             <!-- Education -->
             <div class="form-section">
-                <h3 class="resume-section-title">3. Education</h3>
+                <h3 class="resume-section-title">4. Education</h3>
                 <div class="grid-2">
                     <div class="resume-form-group">
                         <label class="resume-form-label">6) Select Degree</label>
@@ -139,7 +163,7 @@
 
             <!-- Projects -->
             <div class="form-section">
-                <h3 class="resume-section-title">4. Projects (Min 1, Max 2)</h3>
+                <h3 class="resume-section-title">5. Projects (Min 1, Max 2)</h3>
                 <div class="resume-form-group">
                     <label class="resume-form-label">7) Project 1: Name & Link</label>
                     <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
@@ -165,7 +189,7 @@
 
             <!-- Skills -->
             <div class="form-section">
-                <h3 class="resume-section-title">5. Technical Skills</h3>
+                <h3 class="resume-section-title">6. Technical Skills</h3>
                 <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 1.5rem;">8) Select your skills from the domains below. Click multiple options freely. You must select skills from at least 4 domains.</p>
 
                 <div id="domain-error" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: 600;">
@@ -251,7 +275,7 @@
 
             <!-- Experience & Certifications -->
             <div class="form-section">
-                <h3 class="resume-section-title">6. Experience & Certifications</h3>
+                <h3 class="resume-section-title">7. Experience & Certifications</h3>
                 <div class="grid-2">
                     <div class="resume-form-group">
                         <label class="resume-form-label">9) Experience</label>
@@ -375,9 +399,30 @@
         }
     }
 
+    // --- TEMPLATE LOGIC ---
+    const summaryTemplates = {
+        "student": "[Year] [Degree] student specializing in [Field], with a strong foundation in [Key Skills]. Experienced in developing [Projects/Applications] using [Technologies]. Possesses strong skills in [Strengths] and a keen interest in [Areas of Interest]. Seeking opportunities to apply technical knowledge and contribute to real-world [Industry/Domain] projects as a [Target Role].",
+        "motivated": "Motivated [Degree/Field] graduate with a strong foundation in [Skills] and hands-on experience building [Projects]. Proficient in [Technologies] with an interest in [Specialization]. Strong in [Strengths], with the ability to learn new technologies and solve complex problems. Seeking an entry-level [Target Role] position to contribute to [Industry/Domain] while continuing to develop technical expertise.",
+        "experienced": "Software Engineer with [X] years of experience specializing in [Specialization]. Proficient in [Technologies] with hands-on experience designing and developing [Applications/Systems]. Strong expertise in [Backend/Frontend/Cloud/Database Skills] and proven ability to [Achievement]. Experienced in delivering scalable and reliable solutions for [Industry/Domain].",
+        "results_driven": "Results-driven [Job Title] with [X] years of experience in [Industry/Domain], specializing in [Specialization]. Proven expertise in [Skills/Technologies] with a strong track record of delivering [Projects/Solutions]. Successfully [Achievement 1] and [Achievement 2], contributing to [Business/Technical Impact]. Experienced in collaborating with cross-functional teams and driving [Relevant Area]. Seeking to leverage technical and professional expertise as a [Target Role].",
+        "transitioning": "Professional transitioning from [Previous Field] to [New Field], bringing [X] years of experience in [Transferable Skills]. Recently developed expertise in [Technical Skills] through [Projects/Courses/Certifications]. Strong background in [Relevant Strengths] with hands-on experience in [Projects/Technology]. Seeking a [Target Role] opportunity to combine existing professional experience with newly developed technical capabilities.",
+        "internship": "[Year] [Degree] student with a strong foundation in [Field] and practical knowledge of [Skills]. Hands-on experience developing [Projects] using [Technologies]. Interested in [Area] and eager to apply technical knowledge in a professional environment. Seeking a [Internship Type] internship to gain industry experience and contribute to real-world projects."
+    };
+
+    function loadSummaryTemplate() {
+        const selector = document.getElementById("summaryTemplate");
+        const textArea = document.getElementById("field_summary");
+        const selectedValue = selector.value;
+
+        if (selectedValue && summaryTemplates[selectedValue]) {
+            textArea.value = summaryTemplates[selectedValue];
+        }
+    }
+
     // Modal Logic
     function openPreview() {
         // Sync main form data into modal for review
+        document.getElementById('modal_summary').value = document.getElementById('field_summary').value;
         document.getElementById('modal_experience').value = document.getElementById('field_experience').value;
 
         let projText = "Project 1:\n" + document.getElementById('field_p1_desc').value;
@@ -395,6 +440,7 @@
 
     function savePreview() {
         // Sync modified modal data back to main form
+        document.getElementById('field_summary').value = document.getElementById('modal_summary').value;
         document.getElementById('field_experience').value = document.getElementById('modal_experience').value;
         closePreview();
     }
