@@ -16,12 +16,21 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 def get_db_connection():
     return mysql.connector.connect(
-        host=os.getenv('MYSQLHOST'),
-        user=os.getenv('MYSQLUSER'),
-        password=os.getenv('MYSQLPASSWORD'),
-        database=os.getenv('MYSQLDATABASE'),
-        port=int(os.getenv('MYSQLPORT', 3306))
+        host=os.getenv('MYSQLHOST') or os.getenv('DB_HOST') or 'localhost',
+        user=os.getenv('MYSQLUSER') or os.getenv('DB_USER') or 'root',
+        password=os.getenv('MYSQLPASSWORD') or os.getenv('DB_PASSWORD') or 'your_local_password',  # replace with your local DB password
+        database=os.getenv('MYSQLDATABASE') or os.getenv('DB_NAME') or 'skill_analyzer',
+        port=int(os.getenv('MYSQLPORT') or os.getenv('DB_PORT') or 3306)
     )
+
+# def get_db_connection():
+#     return mysql.connector.connect(
+#         host=os.getenv('MYSQLHOST'),
+#         user=os.getenv('MYSQLUSER'),
+#         password=os.getenv('MYSQLPASSWORD'),
+#         database=os.getenv('MYSQLDATABASE'),
+#         port=int(os.getenv('MYSQLPORT', 3306))
+#     )
 
 
 # --- PDF GENERATOR CLASS ---
@@ -115,6 +124,7 @@ def resume_buildup():
         college = request.form.get('college', '')
         passing_year = request.form.get('passing_year', '')
         
+        professional_summary = request.form.get('professional_summary', '')
         experience = request.form.get('experience', '')
         certificates = request.form.get('certificates', '')
         
@@ -175,12 +185,12 @@ def resume_buildup():
             pdf.ln(8)
         
         # --- PROFESSIONAL SUMMARY ---
-        pdf.set_text_color(0, 0, 0)
-        summary_text = "Student with a strong foundation in Full Stack Development and AI/ML. Proven track record of building Generative AI applications and computer vision systems. Passionate about leveraging Large Language Models (LLMs) and modern web technologies to solve complex real-world problems."
-        pdf.add_section_title("PROFESSIONAL SUMMARY")
-        pdf.set_font("Helvetica", "", 10)
-        pdf.multi_cell(0, 5, summary_text)
-        pdf.ln(4)
+        if professional_summary.strip():
+            pdf.set_text_color(0, 0, 0)
+            pdf.add_section_title("PROFESSIONAL SUMMARY")
+            pdf.set_font("Helvetica", "", 10)
+            pdf.multi_cell(0, 5, professional_summary.strip())
+            pdf.ln(4)
         
         # --- EDUCATION ---
         pdf.add_section_title("EDUCATION")
